@@ -15,6 +15,12 @@ FROM docker.io/bitnami/kubectl:1.23.6 as kubectl
 
 FROM ubuntu:22.04
 
+ARG HTTP_PROXY
+ENV HTTP_PROXY=$HTTP_PROXY
+ENV HTTPS_PROXY=$HTTP_PROXY
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTP_PROXY
+
 ENV DEBIAN_FRONTEND=noninteractive
 RUN  apt-get update && apt-get install --fix-missing -y \
         ca-certificates \

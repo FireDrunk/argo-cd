@@ -6,6 +6,12 @@ ARG BASE_IMAGE=docker.io/library/ubuntu:22.04
 ####################################################################################################
 FROM docker.io/library/golang:1.19 AS builder
 
+ARG HTTP_PROXY
+ENV HTTP_PROXY=$HTTP_PROXY
+ENV HTTPS_PROXY=$HTTP_PROXY
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTP_PROXY
+
 RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -37,6 +43,12 @@ RUN ./install.sh helm-linux && \
 FROM $BASE_IMAGE AS argocd-base
 
 USER root
+
+ARG HTTP_PROXY
+ENV HTTP_PROXY=$HTTP_PROXY
+ENV HTTPS_PROXY=$HTTP_PROXY
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTP_PROXY
 
 ENV ARGOCD_USER_ID=999
 ENV DEBIAN_FRONTEND=noninteractive
@@ -83,6 +95,12 @@ WORKDIR /home/argocd
 ####################################################################################################
 FROM --platform=$BUILDPLATFORM docker.io/library/node:12.18.4 AS argocd-ui
 
+ARG HTTP_PROXY
+ENV HTTP_PROXY=$HTTP_PROXY
+ENV HTTPS_PROXY=$HTTP_PROXY
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTP_PROXY
+
 WORKDIR /src
 COPY ["ui/package.json", "ui/yarn.lock", "./"]
 
@@ -100,6 +118,12 @@ RUN HOST_ARCH=$TARGETARCH NODE_ENV='production' NODE_ONLINE_ENV='online' NODE_OP
 # Argo CD Build stage which performs the actual build of Argo CD binaries
 ####################################################################################################
 FROM --platform=$BUILDPLATFORM docker.io/library/golang:1.19 AS argocd-build
+
+ARG HTTP_PROXY
+ENV HTTP_PROXY=$HTTP_PROXY
+ENV HTTPS_PROXY=$HTTP_PROXY
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTP_PROXY
 
 WORKDIR /go/src/github.com/argoproj/argo-cd
 
